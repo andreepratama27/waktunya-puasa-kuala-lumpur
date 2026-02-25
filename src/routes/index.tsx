@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { useEffect, useState } from "react";
 import {
 	Clock3,
-	Compass,
 	ForkKnife,
 	Landmark,
 	MapPin,
@@ -112,24 +112,11 @@ const toMinutes = (value: string) => {
 	return hour * 60 + minute;
 };
 
-const formatTime = (minutes: number) => {
-	const hour24 = Math.floor(minutes / 60) % 24;
-	const minute = minutes % 60;
-	const period = hour24 >= 12 ? "PM" : "AM";
-	const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
-	return `${hour12}:${String(minute).padStart(2, "0")} ${period}`;
-};
-
-const nextAsarIn = (asarTime: string) => {
-	const target = toMinutes(asarTime);
-	if (target === null) return null;
-	const now = new Date();
-	const nowMinutes = now.getHours() * 60 + now.getMinutes();
-	let diff = target - nowMinutes;
-	if (diff <= 0) diff += 24 * 60;
-	const hours = Math.floor(diff / 60);
-	const mins = diff % 60;
-	return `${hours}H ${mins}M`;
+const formatDiff = (diffSeconds: number) => {
+	const hours = Math.floor(diffSeconds / 3600);
+	const mins = Math.floor((diffSeconds % 3600) / 60);
+	const secs = diffSeconds % 60;
+	return `${hours}H ${mins}M ${secs}S`;
 };
 
 const getTodayName = () =>
@@ -179,6 +166,14 @@ function Loading() {
 
 function App() {
 	const { data, error } = Route.useLoaderData();
+	const [now, setNow] = useState(() => new Date());
+
+	useEffect(() => {
+		const timer = window.setInterval(() => {
+			setNow(new Date());
+		}, 1000);
+		return () => window.clearInterval(timer);
+	}, []);
 
 	if (error || !data) {
 		return (
@@ -197,10 +192,10 @@ function App() {
 	}
 
 	const focus = getFocusRow(data);
-	const now = new Date();
 	const heroTime = `${now.toLocaleTimeString("en-US", {
 		hour: "numeric",
 		minute: "2-digit",
+		second: "2-digit",
 		hour12: true,
 	})}`;
 	const heroPieces = heroTime.split(" ");
@@ -231,7 +226,24 @@ function App() {
 			icon: <Moon className="h-4 w-4" aria-hidden="true" />,
 		},
 	] as const;
-	const nextAsr = focus ? nextAsarIn(focus.asar) : null;
+	const nowTotalSeconds =
+		now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+	const nextPrayer = focus
+		? prayerLabels.reduce<{
+				key: (typeof prayerLabels)[number]["key"];
+				label: string;
+				diff: number;
+		  } | null>((closest, item) => {
+				const targetMinutes = toMinutes(focus[item.key]);
+				if (targetMinutes === null) return closest;
+				let diff = targetMinutes * 60 - nowTotalSeconds;
+				if (diff <= 0) diff += 24 * 3600;
+				if (!closest || diff < closest.diff) {
+					return { key: item.key, label: item.label, diff };
+				}
+				return closest;
+			}, null)
+		: null;
 	const iftarTime = focus?.maghrib ?? "-";
 	const sahoorTime = focus?.imsak ?? focus?.subuh ?? "-";
 	const dateLine = focus
@@ -249,9 +261,9 @@ function App() {
 				</header>
 
 				<section className="mt-7 text-center">
-					{nextAsr ? (
+					{nextPrayer ? (
 						<p className="mx-auto inline-flex rounded-full border border-emerald-300/30 bg-emerald-500/15 px-3 py-1 text-[11px] font-bold tracking-[0.12em] text-emerald-200 uppercase">
-							NEXT: ASR IN {nextAsr}
+							NEXT: {nextPrayer.label} IN {formatDiff(nextPrayer.diff)}
 						</p>
 					) : null}
 					<div className="mt-5 flex items-baseline justify-center gap-2 sm:gap-3">
@@ -262,7 +274,9 @@ function App() {
 							{heroPieces[1]}
 						</p>
 					</div>
-					<p className="mt-3 text-3xl font-bold text-emerald-300">Dhuhr Time</p>
+					<p className="mt-3 text-3xl font-bold text-emerald-300">
+						{nextPrayer ? `${nextPrayer.label} Time` : "Prayer Time"}
+					</p>
 					<p className="mt-2 text-sm text-white/60">{dateLine}</p>
 				</section>
 
@@ -294,7 +308,7 @@ function App() {
 						{focus
 							? prayerLabels.map((item) => {
 									const value = focus[item.key];
-									const active = item.key === "zuhur";
+									const active = item.key === nextPrayer?.key;
 									return (
 										<article
 											key={item.key}
