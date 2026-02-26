@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
 import {
 	Clock3,
 	ForkKnife,
@@ -29,24 +29,6 @@ type WeekRow = {
 	maghrib: string;
 	isyak: string;
 };
-
-type LoaderData = {
-	data: WeekRow[] | null;
-	error: string | null;
-};
-
-const fetchPrayerTime = createServerFn({ method: "GET" }).handler(async () => {
-	const response = await fetch(
-		"https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=week&zone=SGR01",
-		{ cache: "no-store" },
-	);
-
-	if (!response.ok) {
-		throw new Error("Failed to fetch prayer time");
-	}
-
-	return response.json();
-});
 
 const dayMap: Record<string, string> = {
 	ahad: "Sunday",
@@ -151,42 +133,23 @@ const getFocusRow = (rows: WeekRow[]) => {
 
 export const Route = createFileRoute("/")({
 	component: App,
-	pendingComponent: Loading,
-	loader: async (): Promise<LoaderData> => {
-		try {
-			const prayerData = await fetchPrayerTime();
-			const normalized = normalizeRows(prayerData);
-			return {
-				data: normalized,
-				error: normalized.length ? null : "Failed to fetch prayer time",
-			};
-		} catch (_error) {
-			return {
-				data: null,
-				error: "Failed to fetch prayer time",
-			};
-		}
-	},
 });
 
-function Loading() {
-	return (
-		<main className="page-wrap" aria-busy="true" aria-live="polite">
-			<div className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
-				<div className="frost-card flex items-center gap-3 rounded-2xl p-5 text-white/85">
-					<Clock3
-						className="h-5 w-5 animate-pulse text-emerald-300"
-						aria-hidden="true"
-					/>
-					<p>Loading prayer times...</p>
-				</div>
-			</div>
-		</main>
-	);
-}
-
 function App() {
-	const { data, error } = Route.useLoaderData();
+	const { data, isLoading, isError } = useQuery({
+		queryKey: ["prayerTime"],
+		queryFn: async () => {
+			const response = await fetch("/api/prayer-time", {
+				cache: "no-store",
+			});
+			if (!response.ok) throw new Error("Failed to fetch prayer time");
+			const json = await response.json();
+			const normalized = normalizeRows(json);
+			if (!normalized.length) throw new Error("Failed to fetch prayer time");
+			return normalized;
+		},
+		staleTime: 5 * 60 * 1000,
+	});
 	const [now, setNow] = useState(() => new Date());
 
 	useEffect(() => {
@@ -196,7 +159,23 @@ function App() {
 		return () => window.clearInterval(timer);
 	}, []);
 
-	if (error || !data) {
+	if (isLoading) {
+		return (
+			<main className="page-wrap" aria-busy="true" aria-live="polite">
+				<div className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
+					<div className="frost-card flex items-center gap-3 rounded-2xl p-5 text-white/85">
+						<Clock3
+							className="h-5 w-5 animate-pulse text-emerald-300"
+							aria-hidden="true"
+						/>
+						<p>Loading prayer times...</p>
+					</div>
+				</div>
+			</main>
+		);
+	}
+
+	if (isError || !data) {
 		return (
 			<main className="page-wrap">
 				<div className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
@@ -437,7 +416,7 @@ function App() {
 
 				<footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 py-5 text-sm text-white/60">
 					<p>
-						© {now.getFullYear()} Waktunya Puasa. All data is fetched from
+						© {now.getFullYear()} Waktunya Puasa by <a href="https://www.linkedin.com/in/andre-pratama27/" target="_blank" noopener noreferrer>@andreepratama27</a>. All data is fetched from
 						the&nbsp;
 						<a
 							className="underline"

@@ -17,6 +17,15 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
+  server: {
+    proxy: {
+      '/api/prayer-time': {
+        target: 'https://www.e-solat.gov.my',
+        changeOrigin: true,
+        rewrite: () => '/index.php?r=esolatApi/takwimsolat&period=week&zone=SGR01',
+      },
+    },
+  },
 })
 
 export default config

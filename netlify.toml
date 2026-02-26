@@ -5,3 +5,9 @@
   command = "npm run dev"
   targetPort = 3000
   port = 8888
+
+[[redirects]]
+  from = "/api/prayer-time"
+  to = "https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=week&zone=SGR01"
+  status = 200
+  force = true
