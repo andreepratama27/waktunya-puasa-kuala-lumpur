@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
 import {
 	Clock3,
 	ForkKnife,
@@ -10,6 +9,14 @@ import {
 	Sun,
 	SunMoon,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 
 type WeekRow = {
 	dayLabel: string;
@@ -119,6 +126,20 @@ const formatDiff = (diffSeconds: number) => {
 	return `${hours}H ${mins}M ${secs}S`;
 };
 
+const NEAR_WINDOW_SECS = 15 * 60; // 900 seconds
+
+const isNearWindow = (value: string, nowSeconds: number): boolean => {
+	const prayerMinutes = toMinutes(value);
+	if (prayerMinutes === null) return false;
+	const prayerSeconds = prayerMinutes * 60;
+	const diff = prayerSeconds - nowSeconds;
+	return (
+		Math.abs(diff) <= NEAR_WINDOW_SECS ||
+		Math.abs(diff + 86400) <= NEAR_WINDOW_SECS ||
+		Math.abs(diff - 86400) <= NEAR_WINDOW_SECS
+	);
+};
+
 const getTodayName = () =>
 	new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(new Date());
 
@@ -196,7 +217,7 @@ function App() {
 		hour: "numeric",
 		minute: "2-digit",
 		second: "2-digit",
-		hour12: true,
+		hour12: false,
 	})}`;
 	const heroPieces = heroTime.split(" ");
 	const prayerLabels = [
@@ -233,7 +254,7 @@ function App() {
 				key: (typeof prayerLabels)[number]["key"];
 				label: string;
 				diff: number;
-		  } | null>((closest, item) => {
+			} | null>((closest, item) => {
 				const targetMinutes = toMinutes(focus[item.key]);
 				if (targetMinutes === null) return closest;
 				let diff = targetMinutes * 60 - nowTotalSeconds;
@@ -302,27 +323,86 @@ function App() {
 				<section className="mt-8">
 					<div className="mb-3 flex items-center justify-between">
 						<h2 className="text-2xl font-bold">Daily Prayers</h2>
-						<p className="text-sm text-emerald-300">View Weekly Calendar</p>
+						<Dialog>
+							<DialogTrigger asChild>
+								<button
+									type="button"
+									className="text-sm text-emerald-300 hover:text-emerald-200 transition-colors cursor-pointer"
+								>
+									View Weekly Calendar
+								</button>
+							</DialogTrigger>
+							<DialogContent className="max-h-[90vh] overflow-y-auto">
+								<DialogHeader>
+									<DialogTitle>Weekly Prayer Timetable (SGR01)</DialogTitle>
+								</DialogHeader>
+								<div className="mt-4 overflow-x-auto">
+									<table className="w-full min-w-[640px] border-collapse text-left text-sm">
+										<caption className="sr-only">
+											Prayer times for Selangor zone SGR01 this week
+										</caption>
+										<thead>
+											<tr className="border-b border-white/15 text-white/70">
+												<th className="px-3 py-2 font-semibold">Day</th>
+												<th className="px-3 py-2 font-semibold">Date</th>
+												<th className="px-3 py-2 font-semibold">Subuh</th>
+												<th className="px-3 py-2 font-semibold">Zuhur</th>
+												<th className="px-3 py-2 font-semibold">Asar</th>
+												<th className="px-3 py-2 font-semibold">Maghrib</th>
+												<th className="px-3 py-2 font-semibold">Isyak</th>
+											</tr>
+										</thead>
+										<tbody>
+											{data.map((row, index) => (
+												<tr
+													key={`${row.dayLabel}-${index}`}
+													className="border-b border-white/10 last:border-b-0"
+												>
+													<td className="px-3 py-2 font-semibold">
+														{row.dayLabel}
+													</td>
+													<td className="px-3 py-2 text-white/75">
+														{row.fullDate}
+													</td>
+													<td className="px-3 py-2">{row.subuh}</td>
+													<td className="px-3 py-2">{row.zuhur}</td>
+													<td className="px-3 py-2">{row.asar}</td>
+													<td className="px-3 py-2">{row.maghrib}</td>
+													<td className="px-3 py-2">{row.isyak}</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</DialogContent>
+						</Dialog>
 					</div>
 					<div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
 						{focus
 							? prayerLabels.map((item) => {
 									const value = focus[item.key];
 									const active = item.key === nextPrayer?.key;
+									const near = !active && isNearWindow(value, nowTotalSeconds);
 									return (
 										<article
 											key={item.key}
 											className={`frost-card rounded-2xl border p-4 ${
 												active
 													? "border-emerald-300 bg-emerald-400 text-white"
-													: "border-white/10"
+													: near
+														? "border-amber-400/60 shadow-[0_0_14px_rgba(251,191,36,0.25)]"
+														: "border-white/10"
 											}`}
 										>
 											<div className="flex items-center justify-between text-sm">
 												<p className="text-white/70">{item.label}</p>
 												<span
 													className={
-														active ? "text-emerald-900" : "text-white/60"
+														active
+															? "text-emerald-900"
+															: near
+																? "text-amber-300"
+																: "text-white/60"
 													}
 												>
 													{item.icon}
@@ -353,46 +433,6 @@ function App() {
 							</p>
 						</div>
 					</article>
-				</section>
-
-				<section className="mt-8">
-					<div className="frost-card overflow-x-auto rounded-2xl border border-white/10 p-4">
-						<h2 className="mb-3 text-xl font-bold">
-							Weekly Prayer Timetable (SGR01)
-						</h2>
-						<table className="w-full min-w-[760px] border-collapse text-left text-sm">
-							<caption className="sr-only">
-								Prayer times for Selangor zone SGR01 this week
-							</caption>
-							<thead>
-								<tr className="border-b border-white/15 text-white/70">
-									<th className="px-3 py-2 font-semibold">Day</th>
-									<th className="px-3 py-2 font-semibold">Date</th>
-									<th className="px-3 py-2 font-semibold">Subuh</th>
-									<th className="px-3 py-2 font-semibold">Zuhur</th>
-									<th className="px-3 py-2 font-semibold">Asar</th>
-									<th className="px-3 py-2 font-semibold">Maghrib</th>
-									<th className="px-3 py-2 font-semibold">Isyak</th>
-								</tr>
-							</thead>
-							<tbody>
-								{data.map((row, index) => (
-									<tr
-										key={`${row.dayLabel}-${index}`}
-										className="border-b border-white/10 last:border-b-0"
-									>
-										<td className="px-3 py-2 font-semibold">{row.dayLabel}</td>
-										<td className="px-3 py-2 text-white/75">{row.fullDate}</td>
-										<td className="px-3 py-2">{row.subuh}</td>
-										<td className="px-3 py-2">{row.zuhur}</td>
-										<td className="px-3 py-2">{row.asar}</td>
-										<td className="px-3 py-2">{row.maghrib}</td>
-										<td className="px-3 py-2">{row.isyak}</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
 				</section>
 
 				<footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 py-5 text-sm text-white/60">
