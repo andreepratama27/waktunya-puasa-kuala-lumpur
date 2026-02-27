@@ -136,18 +136,41 @@ export const Route = createFileRoute("/")({
 	component: App,
 });
 
+const PRAYER_CACHE_KEY = "waktunyaPuasa:prayerTimeCache";
+
 function App() {
 	const { data, isLoading, isError } = useQuery({
 		queryKey: ["prayerTime"],
 		queryFn: async () => {
-			const response = await fetch("/api/prayer-time", {
-				cache: "no-store",
-			});
-			if (!response.ok) throw new Error("Failed to fetch prayer time");
-			const json = await response.json();
-			const normalized = normalizeRows(json);
-			if (!normalized.length) throw new Error("Failed to fetch prayer time");
-			return normalized;
+			// Try live fetch first (with a timeout). If it fails, fall back to cached data.
+			const controller = new AbortController();
+			const timeout = window.setTimeout(() => controller.abort(), 8000);
+			try {
+				const response = await fetch("/api/prayer-time", {
+					cache: "no-store",
+					signal: controller.signal,
+				});
+				if (!response.ok) throw new Error("Failed to fetch prayer time");
+				const json = await response.json();
+				const normalized = normalizeRows(json);
+				if (!normalized.length) throw new Error("Failed to fetch prayer time");
+				window.localStorage.setItem(PRAYER_CACHE_KEY, JSON.stringify(normalized));
+				return normalized;
+			} catch (error) {
+				const cached = window.localStorage.getItem(PRAYER_CACHE_KEY);
+				if (cached) {
+					try {
+						const parsed = JSON.parse(cached);
+						const normalized = normalizeRows(parsed);
+						if (normalized.length) return normalized;
+					} catch {
+						// ignore cache parse errors
+					}
+				}
+				throw error;
+			} finally {
+				window.clearTimeout(timeout);
+			}
 		},
 		staleTime: 5 * 60 * 1000,
 	});
