@@ -10,6 +10,8 @@ import {
 	SunMoon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { PuasaTrackerBanner } from "@/components/PuasaTrackerBanner";
+import { useConvexUrl } from "@/lib/convex";
 import {
 	Dialog,
 	DialogContent,
@@ -151,6 +153,7 @@ function App() {
 		staleTime: 5 * 60 * 1000,
 	});
 	const [now, setNow] = useState(() => new Date());
+	const convexUrl = useConvexUrl();
 
 	useEffect(() => {
 		const timer = window.setInterval(() => {
@@ -278,6 +281,18 @@ function App() {
 						{nextPrayer ? `${nextPrayer.label} Time` : "Prayer Time"}
 					</p>
 					<p className="mt-2 text-sm text-white/60">{dateLine}</p>
+				</section>
+
+				<section className="mt-8">
+					{convexUrl ? (
+						<PuasaTrackerBanner />
+					) : (
+						<article className="frost-card rounded-2xl border border-amber-400/40 bg-amber-500/10 p-5">
+							<p className="text-xs font-bold tracking-[0.12em] text-amber-200 uppercase">Puasa Tracker</p>
+							<p className="mt-2 text-white/70">Tracker belum aktif (Convex belum dikonfigurasi).</p>
+							<p className="mt-1 text-sm text-white/60">Set <code className="text-white">VITE_CONVEX_URL</code> untuk menyimpan check-in.</p>
+						</article>
+					)}
 				</section>
 
 				<section className="mt-8 grid gap-3 md:grid-cols-2">
@@ -416,7 +431,7 @@ function App() {
 
 				<footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 py-5 text-sm text-white/60">
 					<p>
-						© {now.getFullYear()} Waktunya Puasa by <a href="https://www.linkedin.com/in/andre-pratama27/" target="_blank" noopener noreferrer>@andreepratama27</a>. All data is fetched from
+						© {now.getFullYear()} Waktunya Puasa by <a href="https://www.linkedin.com/in/andre-pratama27/" target="_blank" rel="noopener noreferrer">@andreepratama27</a>. All data is fetched from
 						the&nbsp;
 						<a
 							className="underline"
