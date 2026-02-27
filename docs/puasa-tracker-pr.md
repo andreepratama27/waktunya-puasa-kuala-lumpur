@@ -12,11 +12,11 @@
 
 **Homepage**
 
-![Homepage Puasa Tracker](./pr-screenshots/home-puasa-tracker.png)
+![Homepage Puasa Tracker](./pr-screenshots/home-puasa-tracker-checkpoints-loaded.png)
 
 **Check-in page**
 
-![Check-in](./pr-screenshots/check-in.png)
+![Check-in](./pr-screenshots/check-in-timezone-fix.png)
 
 ### Notes
 - Data tersimpan di `localStorage`, jadi sifatnya **per-browser/per-device**.
