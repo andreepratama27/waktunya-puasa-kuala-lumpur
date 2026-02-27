@@ -1,7 +1,7 @@
 ## Puasa Tracker
 
 ### What’s included
-- Homepage banner: progress bar + total puasa (persistent via Convex)
+- Homepage banner: progress bar + total puasa (persistent via **localStorage**)
 - New route: `/check-in`
   - Check-in untuk **hari ini** atau **kemarin**
   - Status: **Puasa** / **Tidak Puasa**
@@ -18,8 +18,5 @@
 
 ![Check-in](./pr-screenshots/check-in.png)
 
-### Setup notes (Convex)
-Tambahkan env var:
-- `VITE_CONVEX_URL=...`
-
-Lalu jalankan Convex dev / deploy sesuai project Convex kamu.
+### Notes
+- Data tersimpan di `localStorage`, jadi sifatnya **per-browser/per-device**.

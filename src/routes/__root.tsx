@@ -9,7 +9,6 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "../integrations/tanstack-query/root-provider";
-import { OptionalConvexProvider } from "../lib/convex";
 import appCss from "../styles.css?url";
 
 interface MyRouterContext {
@@ -48,7 +47,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				<TanStackQueryProvider>
-					<OptionalConvexProvider>{children}</OptionalConvexProvider>
+					{children}
 					<TanStackDevtools
 						config={{
 							position: "bottom-right",

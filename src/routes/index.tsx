@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PuasaTrackerBanner } from "@/components/PuasaTrackerBanner";
-import { useConvexUrl } from "@/lib/convex";
 import {
 	Dialog,
 	DialogContent,
@@ -153,7 +152,6 @@ function App() {
 		staleTime: 5 * 60 * 1000,
 	});
 	const [now, setNow] = useState(() => new Date());
-	const convexUrl = useConvexUrl();
 
 	useEffect(() => {
 		const timer = window.setInterval(() => {
@@ -284,15 +282,7 @@ function App() {
 				</section>
 
 				<section className="mt-8">
-					{convexUrl ? (
-						<PuasaTrackerBanner />
-					) : (
-						<article className="frost-card rounded-2xl border border-amber-400/40 bg-amber-500/10 p-5">
-							<p className="text-xs font-bold tracking-[0.12em] text-amber-200 uppercase">Puasa Tracker</p>
-							<p className="mt-2 text-white/70">Tracker belum aktif (Convex belum dikonfigurasi).</p>
-							<p className="mt-1 text-sm text-white/60">Set <code className="text-white">VITE_CONVEX_URL</code> untuk menyimpan check-in.</p>
-						</article>
-					)}
+					<PuasaTrackerBanner />
 				</section>
 
 				<section className="mt-8 grid gap-3 md:grid-cols-2">

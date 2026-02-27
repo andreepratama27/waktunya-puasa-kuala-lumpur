@@ -1,31 +1,28 @@
-import { useQuery } from "convex/react";
 import { Link } from "@tanstack/react-router";
-import { api } from "@/convex/_generated/api";
-import { getUserTimeZone, formatDateISOInTimeZone } from "../lib/dateIso";
+import { useEffect, useState } from "react";
+import { getProgressSummary } from "@/lib/puasaTracker";
+import { formatDateISOInTimeZone, getUserTimeZone } from "@/lib/dateIso";
 
 const CURRENT_YEAR = new Date().getFullYear();
 
 const clampPercent = (value: number) => Math.max(0, Math.min(100, value));
 
 export function PuasaTrackerBanner() {
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    // Re-render when localStorage changes in other tabs.
+    const onStorage = () => setTick((x) => x + 1);
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   const tz = getUserTimeZone();
   const todayISO = formatDateISOInTimeZone(new Date(), tz);
+  const summary = getProgressSummary({ year: CURRENT_YEAR, upToDateISO: todayISO });
 
-  // If Convex isn't configured, useQuery will throw because no provider.
-  // We avoid that by only rendering this component when Convex exists.
-  const summary = useQuery(api.puasa.getProgressSummary, {
-    year: CURRENT_YEAR,
-    upToDateISO: todayISO,
-  });
-
-  if (!summary) {
-    return (
-      <article className="frost-card rounded-2xl border border-white/10 p-5" aria-busy="true">
-        <p className="text-sm text-white/70">Puasa Tracker</p>
-        <p className="mt-2 text-white/60">Loading progress…</p>
-      </article>
-    );
-  }
+  // tick is used to re-render; it isn't referenced otherwise.
+  void tick;
 
   if (!summary.ok) {
     return (
