@@ -304,9 +304,7 @@ function App() {
 					<p className="mt-2 text-sm text-white/60">{dateLine}</p>
 				</section>
 
-				<section className="mt-8">
-					<PuasaTrackerBanner />
-				</section>
+				
 
 				<section className="mt-8 grid gap-3 md:grid-cols-2">
 					<article className="frost-card rounded-2xl border border-white/10 p-5">
@@ -422,6 +420,10 @@ function App() {
 							: null}
 					</div>
 				</section>
+
+        <section className="mt-8">
+          <PuasaTrackerBanner />
+        </section>
 
 				<section className="mt-8 grid gap-3 w-full">
 					<article className="frost-card relative overflow-hidden rounded-2xl border border-white/10 p-5">
