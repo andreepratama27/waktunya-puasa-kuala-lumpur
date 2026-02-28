@@ -76,7 +76,7 @@ export function PuasaTrackerBanner() {
 				<p className="text-xs font-bold tracking-[0.12em] text-amber-200 uppercase">
 					Puasa Tracker
 				</p>
-				<p className="mt-2 text-white/70">
+				<p className="mt-2 text-theme-muted">
 					Ramadan tracker belum dikonfigurasi untuk tahun {CURRENT_YEAR}.
 				</p>
 			</section>
@@ -99,27 +99,27 @@ export function PuasaTrackerBanner() {
 	};
 
 	return (
-		<section className="frost-card rounded-2xl border border-white/10 p-5">
+		<section className="frost-card rounded-2xl border border-theme-border p-5">
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<div>
-					<p className="text-xs font-bold tracking-[0.12em] text-emerald-200 uppercase">
+					<p className="text-xs font-bold tracking-[0.12em] text-theme-accent uppercase">
 						Puasa Tracker
 					</p>
 					<p className="mt-1 text-xl font-black">
 						Puasa: {summary.fastingCount} / {summary.totalDays}
 					</p>
-					<p className="mt-1 text-sm text-white/60">Progress sampai hari ini</p>
+					<p className="mt-1 text-sm text-theme-subtle">Progress sampai hari ini</p>
 				</div>
 				<div className="text-right">
-					<p className="text-sm text-white/60">Hari berjalan</p>
-					<p className="text-2xl font-black text-emerald-200">
+					<p className="text-sm text-theme-subtle">Hari berjalan</p>
+					<p className="text-2xl font-black text-theme-accent">
 						{summary.daysSoFar}
 					</p>
 				</div>
 			</div>
 
 			<div className="mt-4">
-				<div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
+				<div className="h-2 w-full overflow-hidden rounded-full bg-theme-surface">
 					<div
 						className="h-full rounded-full bg-emerald-400"
 						style={{ width: `${clampPercent(pct)}%` }}
@@ -138,16 +138,14 @@ export function PuasaTrackerBanner() {
 							d.state === "today"
 								? "bg-emerald-300 text-emerald-950"
 								: d.state === "future"
-									? "bg-white/10 text-white/60"
-									: "bg-emerald-500/15 text-emerald-200";
+									? "bg-theme-surface text-theme-subtle"
+									: "bg-theme-badge text-theme-accent";
 
 						const cardClass = isSelected
 							? "border-emerald-300 bg-emerald-500/20"
 							: d.state === "today"
 								? "border-emerald-300/40 bg-emerald-500/10"
-								: d.state === "future"
-									? "border-white/10 bg-white/5"
-									: "border-white/10 bg-white/5";
+								: "border-theme-border bg-theme-wash";
 
 						return (
 							<article
@@ -181,18 +179,18 @@ export function PuasaTrackerBanner() {
 										className={`grid h-14 w-14 place-items-center rounded-full border ${
 											d.checked
 												? "border-emerald-400"
-												: "border-white/10 bg-white/5"
+												: "border-theme-border bg-theme-wash"
 										}`}
 									>
 										<div
-											className={`h-8 w-8 rounded-full ${d.checked ? "bg-emerald-400" : "bg-white/20"}`}
+											className={`h-8 w-8 rounded-full ${d.checked ? "bg-emerald-400" : "bg-theme-surface"}`}
 										/>
 									</div>
 
-									<p className="text-xs text-white/55">{d.dateISO}</p>
+									<p className="text-xs text-theme-subtle">{d.dateISO}</p>
 									<p
 										className={`text-sm font-black ${
-											d.checked ? "text-emerald-200" : "text-white/50"
+											d.checked ? "text-theme-accent" : "text-theme-subtle"
 										}`}
 									>
 										{d.checked ? "PUASA" : "—"}
@@ -210,11 +208,11 @@ export function PuasaTrackerBanner() {
 					type="button"
 					onClick={handleCheckIn}
 					disabled={!selectedDateISO}
-					className={`block w-full rounded-full px-6 py-4 text-center text-lg font-black transition-colors ${selectedDateISO ? "bg-emerald-400 text-emerald-950 hover:bg-emerald-300" : "cursor-not-allowed bg-white/10 text-white/30"}`}
+					className={`block w-full rounded-full px-6 py-4 text-center text-lg font-black transition-colors ${selectedDateISO ? "bg-emerald-400 text-emerald-950 hover:bg-emerald-300" : "cursor-not-allowed bg-theme-surface text-theme-dim"}`}
 				>
 					Check in
 				</button>
-				<p className="mt-2 text-xs text-white/45">
+				<p className="mt-2 text-xs text-theme-subtle">
 					Data tersimpan di localStorage (per device/browser).
 				</p>
 			</div>

@@ -1,11 +1,52 @@
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Syne:wght@700;800&display=swap");
 @import "tailwindcss";
 
+/* ── Semantic color tokens (Tailwind v4 @theme → CSS custom properties on :root) ── */
+@theme {
+	/* Text */
+	--color-theme-text: #e9fff2;
+	--color-theme-muted: rgb(233 255 242 / 0.70);
+	--color-theme-subtle: rgb(233 255 242 / 0.50);
+	--color-theme-dim: rgb(233 255 242 / 0.30);
+	/* Accents */
+	--color-theme-brand: #d1fae5;        /* emerald-100 */
+	--color-theme-accent: #a7f3d0;       /* emerald-200 */
+	--color-theme-bright: #6ee7b7;       /* emerald-300 */
+	/* Surfaces & borders */
+	--color-theme-border: rgb(255 255 255 / 0.10);
+	--color-theme-surface: rgb(255 255 255 / 0.10);
+	--color-theme-wash: rgb(255 255 255 / 0.05);
+	/* Badges */
+	--color-theme-badge: rgb(16 185 129 / 0.15);
+	--color-theme-ring: rgb(110 231 183 / 0.30);
+}
+
 :root {
 	--bg-deep: #021c15;
 	--bg-mid: #063427;
 	--glow: #35e06f;
 	--text-main: #e9fff2;
+}
+
+/* ── Light mode overrides: Misty Sage ──────────────────────── */
+[data-theme="light"] {
+	--bg-deep: #f0f7f4;
+	--bg-mid: #d8ece3;
+	--glow: #10b981;
+	--text-main: #1a3d2b;
+	/* Override semantic tokens */
+	--color-theme-text: #1a3d2b;
+	--color-theme-muted: #7eab93;
+	--color-theme-subtle: #7eab93;
+	--color-theme-dim: rgb(126 171 147 / 0.70);
+	--color-theme-brand: #10b981;
+	--color-theme-accent: #10b981;
+	--color-theme-bright: #059669;
+	--color-theme-border: rgb(26 61 43 / 0.15);
+	--color-theme-surface: rgb(26 61 43 / 0.10);
+	--color-theme-wash: rgb(26 61 43 / 0.05);
+	--color-theme-badge: rgb(16 185 129 / 0.12);
+	--color-theme-ring: rgb(16 185 129 / 0.35);
 }
 
 * {
@@ -21,6 +62,13 @@ body {
 	color: var(--text-main);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+}
+
+[data-theme="light"] body {
+	background:
+		radial-gradient(circle at 20% -20%, #c5e8d8 0%, transparent 45%),
+		radial-gradient(circle at 100% 0%, #daf0e7 0%, transparent 30%),
+		linear-gradient(160deg, #f0f7f4, #e8f3ed 55%, #e2f0e9 100%);
 }
 
 .page-wrap {
@@ -39,6 +87,11 @@ body {
 	pointer-events: none;
 }
 
+[data-theme="light"] .page-wrap::before {
+	background-image: radial-gradient(rgba(5, 90, 55, 0.12) 0.6px, transparent 0.6px);
+	opacity: 0.5;
+}
+
 .frost-card {
 	background: linear-gradient(
 		155deg,
@@ -50,6 +103,16 @@ body {
 	box-shadow: inset 0 0 0 1px rgba(94, 210, 145, 0.08);
 }
 
+[data-theme="light"] .frost-card {
+	background: linear-gradient(
+		155deg,
+		rgba(216, 236, 227, 0.90) 0%,
+		rgba(232, 246, 240, 0.85) 55%,
+		rgba(240, 247, 244, 0.88) 100%
+	);
+	box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.2), 0 2px 16px rgba(0, 0, 0, 0.07);
+}
+
 h1,
 h2,
 h3 {
@@ -59,84 +122,4 @@ h3 {
 
 code {
 	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
-
-/* ── Waktunya Puasa: Light Mode — Misty Sage ──────────────── */
-[data-theme="light"] {
-	--bg-deep: #f0f7f4;
-	--bg-mid: #d8ece3;
-	--glow: #10b981;
-	--text-main: #1a3d2b;
-	--lm-text: #1a3d2b;
-	--lm-text-muted: #7eab93;
-	--lm-primary: #34d399;
-	--lm-primary-dark: #10b981;
-}
-
-[data-theme="light"] body {
-	background:
-		radial-gradient(circle at 20% -20%, #c5e8d8 0%, transparent 45%),
-		radial-gradient(circle at 100% 0%, #daf0e7 0%, transparent 30%),
-		linear-gradient(160deg, #f0f7f4, #e8f3ed 55%, #e2f0e9 100%);
-	color: #1a3d2b;
-}
-
-[data-theme="light"] .frost-card {
-	background: linear-gradient(
-		155deg,
-		rgba(216, 236, 227, 0.90) 0%,
-		rgba(232, 246, 240, 0.85) 55%,
-		rgba(240, 247, 244, 0.88) 100%
-	);
-	backdrop-filter: blur(8px);
-	box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.2), 0 2px 16px rgba(0, 0, 0, 0.07);
-}
-
-[data-theme="light"] .page-wrap::before {
-	background-image: radial-gradient(rgba(5, 90, 55, 0.12) 0.6px, transparent 0.6px);
-	opacity: 0.5;
-}
-
-/* Override hardcoded Tailwind white/opacity text classes */
-[data-theme="light"] .page-wrap {
-	color: #1a3d2b;
-}
-
-[data-theme="light"] [class*="text-white"] {
-	color: #1a3d2b !important;
-}
-
-[data-theme="light"] [class~="text-white\/60"],
-[data-theme="light"] [class~="text-white\/70"],
-[data-theme="light"] [class~="text-white\/75"],
-[data-theme="light"] [class~="text-white\/85"] {
-	color: #7eab93 !important;
-}
-
-[data-theme="light"] [class~="text-emerald-100"],
-[data-theme="light"] [class~="text-emerald-200"] {
-	color: #10b981 !important;
-}
-
-[data-theme="light"] [class~="text-emerald-300"] {
-	color: #059669 !important;
-}
-
-[data-theme="light"] [class~="border-white\/10"],
-[data-theme="light"] [class~="border-white\/15"] {
-	border-color: rgba(26, 61, 43, 0.15) !important;
-}
-
-[data-theme="light"] [class~="bg-emerald-500\/15"],
-[data-theme="light"] [class~="bg-emerald-500\/10"] {
-	background-color: rgba(16, 185, 129, 0.12) !important;
-}
-
-[data-theme="light"] [class~="border-emerald-300\/30"] {
-	border-color: rgba(16, 185, 129, 0.35) !important;
-}
-
-[data-theme="light"] [class~="text-white\/45"],
-[data-theme="light"] [class~="text-white\/60"] {
-	color: #7eab93 !important;
 }

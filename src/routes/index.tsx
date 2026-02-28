@@ -189,9 +189,9 @@ function App() {
 		return (
 			<main className="page-wrap" aria-busy="true" aria-live="polite">
 				<div className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
-					<div className="frost-card flex items-center gap-3 rounded-2xl p-5 text-white/85">
+					<div className="frost-card flex items-center gap-3 rounded-2xl p-5 text-theme-muted">
 						<Clock3
-							className="h-5 w-5 animate-pulse text-emerald-300"
+							className="h-5 w-5 animate-pulse text-theme-bright"
 							aria-hidden="true"
 						/>
 						<p>Loading prayer times...</p>
@@ -277,18 +277,18 @@ function App() {
 		: "Selangor, Malaysia";
 
 	return (
-		<main className="page-wrap pb-10 text-white">
+		<main className="page-wrap pb-10 text-theme-text">
 			<div className="mx-auto max-w-6xl px-5 pt-5 sm:px-8">
-				<header className="frost-card rounded-2xl border border-white/10 px-4 py-3 sm:px-6">
-					<div className="flex items-center gap-2 text-sm font-semibold text-emerald-100 sm:text-lg">
-						<Landmark className="h-5 w-5 text-emerald-300" aria-hidden="true" />
+				<header className="frost-card rounded-2xl border border-theme-border px-4 py-3 sm:px-6">
+					<div className="flex items-center gap-2 text-sm font-semibold text-theme-brand sm:text-lg">
+						<Landmark className="h-5 w-5 text-theme-bright" aria-hidden="true" />
 						<span>Waktunya Puasa</span>
 					</div>
 				</header>
 
 				<section className="mt-7 text-center">
 					{nextPrayer ? (
-						<p className="mx-auto inline-flex rounded-full border border-emerald-300/30 bg-emerald-500/15 px-3 py-1 text-[11px] font-bold tracking-[0.12em] text-emerald-200 uppercase">
+						<p className="mx-auto inline-flex rounded-full border border-theme-ring bg-theme-badge px-3 py-1 text-[11px] font-bold tracking-[0.12em] text-theme-accent uppercase">
 							NEXT: {nextPrayer.label} IN {formatDiff(nextPrayer.diff)}
 						</p>
 					) : null}
@@ -296,28 +296,28 @@ function App() {
 						<p className="text-6xl font-black tracking-tight sm:text-8xl">
 							{heroPieces[0]}
 						</p>
-						<p className="text-2xl font-semibold text-white/70 sm:text-5xl">
+						<p className="text-2xl font-semibold text-theme-muted sm:text-5xl">
 							{heroPieces[1]}
 						</p>
 					</div>
-					<p className="mt-3 text-3xl font-bold text-emerald-300">
+					<p className="mt-3 text-3xl font-bold text-theme-bright">
 						{nextPrayer ? `${nextPrayer.label} Time` : "Prayer Time"}
 					</p>
-					<p className="mt-2 text-sm text-white/60">{dateLine}</p>
+					<p className="mt-2 text-sm text-theme-subtle">{dateLine}</p>
 				</section>
 
-				
+
 
 				<section className="mt-8 grid gap-3 md:grid-cols-2">
-					<article className="frost-card rounded-2xl border border-white/10 p-5">
-						<p className="text-sm text-white/70">Sahoor Ends</p>
+					<article className="frost-card rounded-2xl border border-theme-border p-5">
+						<p className="text-sm text-theme-muted">Sahoor Ends</p>
 						<div className="mt-1 flex items-center justify-between">
 							<p className="text-4xl font-black">{sahoorTime}</p>
-							<Clock3 className="h-6 w-6 text-white/45" aria-hidden="true" />
+							<Clock3 className="h-6 w-6 text-theme-subtle" aria-hidden="true" />
 						</div>
 					</article>
 					<article className="frost-card rounded-2xl border border-emerald-300/35 bg-emerald-500/10 p-5">
-						<p className="text-sm text-emerald-200">Iftar Time</p>
+						<p className="text-sm text-theme-accent">Iftar Time</p>
 						<div className="mt-1 flex items-center justify-between">
 							<p className="text-4xl font-black">{iftarTime}</p>
 							<span className="grid h-10 w-10 place-content-center rounded-full bg-emerald-400 text-emerald-950 shadow-[0_0_25px_rgba(52,211,153,.5)]">
@@ -334,7 +334,7 @@ function App() {
 							<DialogTrigger asChild>
 								<button
 									type="button"
-									className="text-sm text-emerald-300 hover:text-emerald-200 transition-colors cursor-pointer"
+									className="text-sm text-theme-bright hover:text-theme-accent transition-colors cursor-pointer"
 								>
 									View Weekly Calendar
 								</button>
@@ -349,7 +349,7 @@ function App() {
 											Prayer times for Selangor zone SGR01 this week
 										</caption>
 										<thead>
-											<tr className="border-b border-white/15 text-white/70">
+											<tr className="border-b border-theme-border text-theme-muted">
 												<th className="px-3 py-2 font-semibold">Day</th>
 												<th className="px-3 py-2 font-semibold">Date</th>
 												<th className="px-3 py-2 font-semibold">Subuh</th>
@@ -363,12 +363,12 @@ function App() {
 											{data.map((row, index) => (
 												<tr
 													key={`${row.dayLabel}-${index}`}
-													className="border-b border-white/10 last:border-b-0"
+													className="border-b border-theme-border last:border-b-0"
 												>
 													<td className="px-3 py-2 font-semibold">
 														{row.dayLabel}
 													</td>
-													<td className="px-3 py-2 text-white/75">
+													<td className="px-3 py-2 text-theme-muted">
 														{row.fullDate}
 													</td>
 													<td className="px-3 py-2">{row.subuh}</td>
@@ -398,18 +398,18 @@ function App() {
 													? "border-emerald-300 bg-emerald-400 text-white"
 													: near
 														? "border-amber-400/60 shadow-[0_0_14px_rgba(251,191,36,0.25)]"
-														: "border-white/10"
+														: "border-theme-border"
 											}`}
 										>
 											<div className="flex items-center justify-between text-sm">
-												<p className="text-white/70">{item.label}</p>
+												<p className="text-theme-muted">{item.label}</p>
 												<span
 													className={
 														active
 															? "text-emerald-900"
 															: near
 																? "text-amber-300"
-																: "text-white/60"
+																: "text-theme-subtle"
 													}
 												>
 													{item.icon}
@@ -428,25 +428,25 @@ function App() {
         </section>
 
 				<section className="mt-8 grid gap-3 w-full">
-					<article className="frost-card relative overflow-hidden rounded-2xl border border-white/10 p-5">
+					<article className="frost-card relative overflow-hidden rounded-2xl border border-theme-border p-5">
 						<div
 							className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(52,211,153,.18),transparent_55%)]"
 							aria-hidden="true"
 						/>
 						<div className="relative">
-							<p className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.1em] text-emerald-300 uppercase">
+							<p className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.1em] text-theme-bright uppercase">
 								<MapPin className="h-4 w-4" aria-hidden="true" />
 								Current Location
 							</p>
 							<p className="mt-2 text-3xl font-black">Selangor, Malaysia</p>
-							<p className="mt-1 text-white/70">
+							<p className="mt-1 text-theme-muted">
 								Prayer times calculation method: JAKIM Malaysia
 							</p>
 						</div>
 					</article>
 				</section>
 
-				<footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 py-5 text-sm text-white/60">
+				<footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-theme-border py-5 text-sm text-theme-subtle">
 					<p>
 						© {now.getFullYear()} Waktunya Puasa by <a href="https://www.linkedin.com/in/andre-pratama27/" target="_blank" rel="noopener noreferrer">@andreepratama27</a>. All data is fetched from
 						the&nbsp;
@@ -461,13 +461,13 @@ function App() {
 						.
 					</p>
 					<button
-					type="button"
-					onClick={toggle}
-					aria-label="Toggle theme"
-					className="cursor-pointer opacity-60 hover:opacity-100 transition-opacity"
-				>
-					{theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-				</button>
+						type="button"
+						onClick={toggle}
+						aria-label="Toggle theme"
+						className="cursor-pointer opacity-60 hover:opacity-100 transition-opacity"
+					>
+						{theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+					</button>
 				</footer>
 			</div>
 		</main>
