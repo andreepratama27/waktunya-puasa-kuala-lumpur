@@ -10,6 +10,7 @@ import {
 	SunMoon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTheme } from "./__root";
 import { PuasaTrackerBanner } from "@/components/PuasaTrackerBanner";
 import {
 	Dialog,
@@ -174,6 +175,7 @@ function App() {
 		},
 		staleTime: 5 * 60 * 1000,
 	});
+	const { theme, toggle } = useTheme();
 	const [now, setNow] = useState(() => new Date());
 
 	useEffect(() => {
@@ -458,11 +460,14 @@ function App() {
 						</a>
 						.
 					</p>
-					{/* <div className="flex items-center gap-4">
-						<p>Privacy</p>
-						<p>Terms</p>
-						<p>API</p>
-					</div> */}
+					<button
+					type="button"
+					onClick={toggle}
+					aria-label="Toggle theme"
+					className="cursor-pointer opacity-60 hover:opacity-100 transition-opacity"
+				>
+					{theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+				</button>
 				</footer>
 			</div>
 		</main>
