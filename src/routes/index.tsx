@@ -14,6 +14,7 @@ import { useTheme } from "./__root";
 import { PuasaTrackerBanner } from "@/components/PuasaTrackerBanner";
 import { KumpulanDoaBanner } from "@/components/KumpulanDoaBanner";
 import { TasbihDigitalBanner } from "@/components/ZikirBanner";
+import { QuranBanner } from "@/components/QuranBanner";
 import {
 	Dialog,
 	DialogContent,
@@ -434,6 +435,10 @@ function App() {
 
 				<section className="mt-8">
 					<TasbihDigitalBanner />
+				</section>
+
+				<section className="mt-8">
+					<QuranBanner />
 				</section>
 
 				<section className="mt-8 grid gap-3 w-full">
