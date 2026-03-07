@@ -80,30 +80,56 @@ function vibrateTick() {
 
 let audioCtx: AudioContext | null = null;
 
+function getAudioContextCtor() {
+	if (typeof window === "undefined") return null;
+	return (
+		window.AudioContext ||
+		(window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext ||
+		null
+	);
+}
+
+function ensureAudioContext() {
+	const Ctx = getAudioContextCtor();
+	if (!Ctx) return null;
+	if (!audioCtx) audioCtx = new Ctx();
+	return audioCtx;
+}
+
 function playTickSound() {
-	// Best-effort: small "click" using Web Audio (no external asset).
-	// Works on most browsers after a user gesture; if blocked, fail silently.
+	// Best-effort: short "click" using Web Audio.
+	// Many mobile browsers require AudioContext resume() inside a user gesture.
 	try {
-		if (typeof window === "undefined") return;
-		const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-		if (!Ctx) return;
-		if (!audioCtx) audioCtx = new Ctx();
-		if (audioCtx.state === "suspended") {
-			// resume is allowed only after a gesture; we are called from a gesture path.
-			audioCtx.resume().catch(() => undefined);
+		const ctx = ensureAudioContext();
+		if (!ctx) return;
+
+		const play = () => {
+			try {
+				const now = ctx.currentTime;
+				const osc = ctx.createOscillator();
+				const gain = ctx.createGain();
+				osc.type = "triangle";
+				osc.frequency.setValueAtTime(1200, now);
+				gain.gain.setValueAtTime(0.0001, now);
+				gain.gain.exponentialRampToValueAtTime(0.22, now + 0.004);
+				gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+				osc.connect(gain);
+				gain.connect(ctx.destination);
+				osc.start(now);
+				osc.stop(now + 0.07);
+			} catch {
+				// ignore
+			}
+		};
+
+		if (ctx.state === "suspended") {
+			ctx.resume()
+				.then(() => setTimeout(play, 0))
+				.catch(() => undefined);
+			return;
 		}
-		const now = audioCtx.currentTime;
-		const osc = audioCtx.createOscillator();
-		const gain = audioCtx.createGain();
-		osc.type = "square";
-		osc.frequency.setValueAtTime(880, now);
-		gain.gain.setValueAtTime(0.0001, now);
-		gain.gain.exponentialRampToValueAtTime(0.08, now + 0.005);
-		gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
-		osc.connect(gain);
-		gain.connect(audioCtx.destination);
-		osc.start(now);
-		osc.stop(now + 0.07);
+
+		play();
 	} catch {
 		// ignore
 	}
@@ -147,7 +173,7 @@ function ZikirPage() {
 			return next;
 		});
 		vibrateTick();
-	playTickSound();
+		playTickSound();
 	};
 
 	const reset = () => setTotalCount(0);
