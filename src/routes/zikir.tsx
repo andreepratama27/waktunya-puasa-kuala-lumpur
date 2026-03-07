@@ -78,6 +78,37 @@ function vibrateTick() {
 	}
 }
 
+let audioCtx: AudioContext | null = null;
+
+function playTickSound() {
+	// Best-effort: small "click" using Web Audio (no external asset).
+	// Works on most browsers after a user gesture; if blocked, fail silently.
+	try {
+		if (typeof window === "undefined") return;
+		const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+		if (!Ctx) return;
+		if (!audioCtx) audioCtx = new Ctx();
+		if (audioCtx.state === "suspended") {
+			// resume is allowed only after a gesture; we are called from a gesture path.
+			audioCtx.resume().catch(() => undefined);
+		}
+		const now = audioCtx.currentTime;
+		const osc = audioCtx.createOscillator();
+		const gain = audioCtx.createGain();
+		osc.type = "square";
+		osc.frequency.setValueAtTime(880, now);
+		gain.gain.setValueAtTime(0.0001, now);
+		gain.gain.exponentialRampToValueAtTime(0.08, now + 0.005);
+		gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+		osc.connect(gain);
+		gain.connect(audioCtx.destination);
+		osc.start(now);
+		osc.stop(now + 0.07);
+	} catch {
+		// ignore
+	}
+}
+
 function ZikirPage() {
 	const tz = useMemo(() => getTimeZoneSafe(), []);
 	const todayISO = useMemo(() => formatDateISOInTimeZone(new Date(), tz), [tz]);
@@ -116,6 +147,7 @@ function ZikirPage() {
 			return next;
 		});
 		vibrateTick();
+	playTickSound();
 	};
 
 	const reset = () => setTotalCount(0);
