@@ -121,31 +121,31 @@ function ZikirPage() {
 	const reset = () => setTotalCount(0);
 
 	// Pull-release gesture
-	const startY = useRef<number | null>(null);
+	const startX = useRef<number | null>(null);
 	const pullPx = useRef(0);
 	const [pullUiPx, setPullUiPx] = useState(0);
 	const threshold = 90;
 
 	const onPointerDown = (e: React.PointerEvent) => {
 		if (totalDone) return;
-		startY.current = e.clientY;
+		startX.current = e.clientX;
 		pullPx.current = 0;
 		setPullUiPx(0);
 		(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
 	};
 
 	const onPointerMove = (e: React.PointerEvent) => {
-		if (startY.current === null) return;
-		const delta = e.clientY - startY.current;
+		if (startX.current === null) return;
+		const delta = e.clientX - startX.current;
 		const p = clamp(delta, 0, 140);
 		pullPx.current = p;
 		setPullUiPx(p);
 	};
 
 	const onPointerUp = () => {
-		if (startY.current === null) return;
+		if (startX.current === null) return;
 		const p = pullPx.current;
-		startY.current = null;
+		startX.current = null;
 		pullPx.current = 0;
 		setPullUiPx(0);
 		if (p >= threshold) increment();
@@ -160,7 +160,7 @@ function ZikirPage() {
 					</p>
 					<h1 className="mt-2 text-3xl font-black">Tasbih 99 (33×3)</h1>
 					<p className="mt-2 text-sm text-theme-subtle">
-						Tarik–lepas manik untuk menambah hitungan. Progress reset otomatis setiap hari.
+						Geser ke samping lalu lepas untuk menambah hitungan. Progress reset otomatis setiap hari.
 					</p>
 					<div className="mt-4 flex items-center justify-between">
 						<Link
@@ -242,7 +242,7 @@ function ZikirPage() {
 
 								<div
 									className="grid place-items-center"
-									style={{ transform: `translateY(${pullUiPx}px)` }}
+									style={{ transform: `translateX(${pullUiPx}px)` }}
 								>
 									<div
 										className={`grid h-24 w-24 place-items-center rounded-full border bg-emerald-400 text-emerald-950 shadow-[0_0_24px_rgba(52,211,153,.35)] transition-transform ${
@@ -254,7 +254,7 @@ function ZikirPage() {
 										<p className="text-3xl font-black">{Math.min(99, totalCount)}</p>
 									</div>
 									<p className="mt-3 text-xs font-bold tracking-[0.12em] text-theme-subtle uppercase">
-										Tarik ke bawah lalu lepas
+										Geser ke kanan lalu lepas
 									</p>
 									<p className="mt-1 text-xs text-theme-dim">
 										{canVibrate() ? "Getar aktif" : "Getar tidak tersedia di device ini"}
@@ -281,7 +281,7 @@ function ZikirPage() {
 							</p>
 						) : (
 							<p className="mt-4 text-center text-xs text-theme-subtle">
-								Tips: tarik sampai terasa “nyangkut”, lalu lepas.
+								Tips: geser ke kanan sampai terasa “nyangkut”, lalu lepas.
 							</p>
 						)}
 					</article>
