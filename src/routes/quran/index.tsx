@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchChapters } from "@/lib/quranApi";
 
-export const Route = createFileRoute("/quran")({
+export const Route = createFileRoute("/quran/")({
 	component: QuranIndexPage,
 });
 

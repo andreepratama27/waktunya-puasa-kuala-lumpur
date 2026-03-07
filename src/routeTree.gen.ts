@@ -10,20 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ZikirRouteImport } from './routes/zikir'
-import { Route as QuranRouteImport } from './routes/quran'
 import { Route as KumpulanDoaRouteImport } from './routes/kumpulan-doa'
 import { Route as CheckInRouteImport } from './routes/check-in'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as QuranSurahRouteImport } from './routes/quran.$surah'
+import { Route as QuranIndexRouteImport } from './routes/quran/index'
+import { Route as QuranSurahRouteImport } from './routes/quran/$surah'
 
 const ZikirRoute = ZikirRouteImport.update({
   id: '/zikir',
   path: '/zikir',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QuranRoute = QuranRouteImport.update({
-  id: '/quran',
-  path: '/quran',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KumpulanDoaRoute = KumpulanDoaRouteImport.update({
@@ -41,36 +36,41 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QuranIndexRoute = QuranIndexRouteImport.update({
+  id: '/quran/',
+  path: '/quran/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const QuranSurahRoute = QuranSurahRouteImport.update({
-  id: '/$surah',
-  path: '/$surah',
-  getParentRoute: () => QuranRoute,
+  id: '/quran/$surah',
+  path: '/quran/$surah',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/check-in': typeof CheckInRoute
   '/kumpulan-doa': typeof KumpulanDoaRoute
-  '/quran': typeof QuranRouteWithChildren
   '/zikir': typeof ZikirRoute
   '/quran/$surah': typeof QuranSurahRoute
+  '/quran/': typeof QuranIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/check-in': typeof CheckInRoute
   '/kumpulan-doa': typeof KumpulanDoaRoute
-  '/quran': typeof QuranRouteWithChildren
   '/zikir': typeof ZikirRoute
   '/quran/$surah': typeof QuranSurahRoute
+  '/quran': typeof QuranIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/check-in': typeof CheckInRoute
   '/kumpulan-doa': typeof KumpulanDoaRoute
-  '/quran': typeof QuranRouteWithChildren
   '/zikir': typeof ZikirRoute
   '/quran/$surah': typeof QuranSurahRoute
+  '/quran/': typeof QuranIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -78,33 +78,34 @@ export interface FileRouteTypes {
     | '/'
     | '/check-in'
     | '/kumpulan-doa'
-    | '/quran'
     | '/zikir'
     | '/quran/$surah'
+    | '/quran/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/check-in'
     | '/kumpulan-doa'
-    | '/quran'
     | '/zikir'
     | '/quran/$surah'
+    | '/quran'
   id:
     | '__root__'
     | '/'
     | '/check-in'
     | '/kumpulan-doa'
-    | '/quran'
     | '/zikir'
     | '/quran/$surah'
+    | '/quran/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckInRoute: typeof CheckInRoute
   KumpulanDoaRoute: typeof KumpulanDoaRoute
-  QuranRoute: typeof QuranRouteWithChildren
   ZikirRoute: typeof ZikirRoute
+  QuranSurahRoute: typeof QuranSurahRoute
+  QuranIndexRoute: typeof QuranIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -114,13 +115,6 @@ declare module '@tanstack/react-router' {
       path: '/zikir'
       fullPath: '/zikir'
       preLoaderRoute: typeof ZikirRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/quran': {
-      id: '/quran'
-      path: '/quran'
-      fullPath: '/quran'
-      preLoaderRoute: typeof QuranRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kumpulan-doa': {
@@ -144,32 +138,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/quran/': {
+      id: '/quran/'
+      path: '/quran'
+      fullPath: '/quran/'
+      preLoaderRoute: typeof QuranIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/quran/$surah': {
       id: '/quran/$surah'
-      path: '/$surah'
+      path: '/quran/$surah'
       fullPath: '/quran/$surah'
       preLoaderRoute: typeof QuranSurahRouteImport
-      parentRoute: typeof QuranRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface QuranRouteChildren {
-  QuranSurahRoute: typeof QuranSurahRoute
-}
-
-const QuranRouteChildren: QuranRouteChildren = {
-  QuranSurahRoute: QuranSurahRoute,
-}
-
-const QuranRouteWithChildren = QuranRoute._addFileChildren(QuranRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckInRoute: CheckInRoute,
   KumpulanDoaRoute: KumpulanDoaRoute,
-  QuranRoute: QuranRouteWithChildren,
   ZikirRoute: ZikirRoute,
+  QuranSurahRoute: QuranSurahRoute,
+  QuranIndexRoute: QuranIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
