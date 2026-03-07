@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ZikirRouteImport } from './routes/zikir'
 import { Route as KumpulanDoaRouteImport } from './routes/kumpulan-doa'
 import { Route as CheckInRouteImport } from './routes/check-in'
 import { Route as IndexRouteImport } from './routes/index'
 
+const ZikirRoute = ZikirRouteImport.update({
+  id: '/zikir',
+  path: '/zikir',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KumpulanDoaRoute = KumpulanDoaRouteImport.update({
   id: '/kumpulan-doa',
   path: '/kumpulan-doa',
@@ -33,34 +39,45 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/check-in': typeof CheckInRoute
   '/kumpulan-doa': typeof KumpulanDoaRoute
+  '/zikir': typeof ZikirRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/check-in': typeof CheckInRoute
   '/kumpulan-doa': typeof KumpulanDoaRoute
+  '/zikir': typeof ZikirRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/check-in': typeof CheckInRoute
   '/kumpulan-doa': typeof KumpulanDoaRoute
+  '/zikir': typeof ZikirRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/check-in' | '/kumpulan-doa'
+  fullPaths: '/' | '/check-in' | '/kumpulan-doa' | '/zikir'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/check-in' | '/kumpulan-doa'
-  id: '__root__' | '/' | '/check-in' | '/kumpulan-doa'
+  to: '/' | '/check-in' | '/kumpulan-doa' | '/zikir'
+  id: '__root__' | '/' | '/check-in' | '/kumpulan-doa' | '/zikir'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckInRoute: typeof CheckInRoute
   KumpulanDoaRoute: typeof KumpulanDoaRoute
+  ZikirRoute: typeof ZikirRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/zikir': {
+      id: '/zikir'
+      path: '/zikir'
+      fullPath: '/zikir'
+      preLoaderRoute: typeof ZikirRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/kumpulan-doa': {
       id: '/kumpulan-doa'
       path: '/kumpulan-doa'
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckInRoute: CheckInRoute,
   KumpulanDoaRoute: KumpulanDoaRoute,
+  ZikirRoute: ZikirRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
