@@ -188,7 +188,7 @@ function ZikirPage() {
 			<div className="mx-auto max-w-3xl px-5 pt-6 sm:px-8">
 				<header className="frost-card rounded-2xl border border-theme-border p-5">
 					<p className="text-xs font-bold tracking-[0.12em] text-theme-accent uppercase">
-						Zikir
+						Tasbih Digital
 					</p>
 					<h1 className="mt-2 text-3xl font-black">Tasbih 99 (33×3)</h1>
 					<p className="mt-2 text-sm text-theme-subtle">

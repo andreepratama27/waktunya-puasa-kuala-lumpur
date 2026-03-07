@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { useTheme } from "./__root";
 import { PuasaTrackerBanner } from "@/components/PuasaTrackerBanner";
 import { KumpulanDoaBanner } from "@/components/KumpulanDoaBanner";
-import { ZikirBanner } from "@/components/ZikirBanner";
+import { TasbihDigitalBanner } from "@/components/ZikirBanner";
 import {
 	Dialog,
 	DialogContent,
@@ -433,7 +433,7 @@ function App() {
 				</section>
 
 				<section className="mt-8">
-					<ZikirBanner />
+					<TasbihDigitalBanner />
 				</section>
 
 				<section className="mt-8 grid gap-3 w-full">
