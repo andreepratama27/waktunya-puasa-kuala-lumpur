@@ -11,6 +11,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "../integrations/tanstack-query/root-provider";
 import appCss from "../styles.css?url";
+import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 
 interface MyRouterContext {
 	queryClient: QueryClient;
@@ -36,13 +37,37 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "TanStack Start Starter",
+				name: "theme-color",
+				content: "#0ea5e9",
+			},
+			{
+				name: "apple-mobile-web-app-capable",
+				content: "yes",
+			},
+			{
+				name: "apple-mobile-web-app-title",
+				content: "Waktunya Puasa",
+			},
+			{
+				title: "Waktunya Puasa Kuala Lumpur",
 			},
 		],
 		links: [
 			{
 				rel: "stylesheet",
 				href: appCss,
+			},
+			{
+				rel: "manifest",
+				href: "/manifest.webmanifest",
+			},
+			{
+				rel: "icon",
+				href: "/icons/icon-192.png",
+			},
+			{
+				rel: "apple-touch-icon",
+				href: "/icons/apple-touch-icon.png",
 			},
 		],
 	}),
@@ -76,6 +101,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<ThemeContext.Provider value={{ theme, toggle }}>
 					<TanStackQueryProvider>
 						{children}
+					<PwaInstallPrompt onlyHome />
 						<TanStackDevtools
 							config={{
 								position: "bottom-right",
